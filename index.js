@@ -5,8 +5,6 @@ const cors = require('cors');
 const app = express()
 const port = process.env.PORT || 54321
 
-
-
 app.use(cors());
 app.use(express.json());
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@saaddb.bmj48ga.mongodb.net/?retryWrites=true&w=majority`
@@ -24,7 +22,6 @@ async function run() {
     const cbid = database.collection("bid");
     const cjobs = database.collection("jobs");
     const cuser = database.collection("user");
-
     app.post('/user', async (req, res) => {
       const user = req.body
       const query = { email: new RegExp(user.email, "i") }
