@@ -40,6 +40,12 @@ async function run() {
       const users=await cuser.find().limit(5).toArray()
       res.send(users)
     })
+    app.get('/newjobs',async(req,res)=>{
+      const query = cjobs.find({}).sort({ _id: -1 }).limit(4);
+      const latestjobs = await query.toArray();
+      res.send(latestjobs)
+
+    })
     app.get('/jobs',async(req,res)=>{
       const response={}
       const query1={cate:{$eq:"web development"}}
