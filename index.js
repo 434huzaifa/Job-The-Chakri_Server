@@ -53,17 +53,24 @@ async function run() {
       response.graphics=await cjobs.find(query3).toArray()
       res.send(response)
     })
-    app.post('/addjobs',async (req,res)=>{
+    app.post('/addjob',async (req,res)=>{
       const result=await cjobs.insertOne(req.body)
       res.send(result)
     })
     app.get('/myjobs/:mail',async(req,res)=>{
       let mail=req.params.mail
-      const query ={email:mail}
+      console.log(mail)
+      const query ={employer:{$eq:mail}}
       const response= await cjobs.find(query).toArray()
       res.send(response)
     })
-
+    app.get('/job/:id',async(req,res)=>{
+      let id=new ObjectId(req.params.id)
+      res.send(await cjobs.findOne({_id:id}))
+    })
+    app.post('/bid',async(req,res)=>{
+      res.send(await cbid.insertOne(req.body))
+    })
   } finally {
   }
 }
