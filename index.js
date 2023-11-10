@@ -53,6 +53,10 @@ async function run() {
       response.graphics=await cjobs.find(query3).toArray()
       res.send(response)
     })
+    app.post('/addjobs',async (req,res)=>{
+      const result=await cjobs.insertOne(req.body)
+      res.send(result)
+    })
 
   } finally {
   }
