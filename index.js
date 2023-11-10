@@ -57,6 +57,12 @@ async function run() {
       const result=await cjobs.insertOne(req.body)
       res.send(result)
     })
+    app.get('/myjobs/:mail',async(req,res)=>{
+      let mail=req.params.mail
+      const query ={email:mail}
+      const response= await cjobs.find(query).toArray()
+      res.send(response)
+    })
 
   } finally {
   }
