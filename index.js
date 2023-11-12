@@ -77,7 +77,9 @@ async function run() {
       const response= await cbid.find(query).toArray()
       let bidjobs= new Array(response.length)
       for(let i=0;i<response.length;i++){
-        bidjobs[i]=await cjobs.findOne({_id:response[i].jobid})
+        let t=await cjobs.findOne({_id:new ObjectId(response[i].jobid)})
+        t.status=response[i].status
+        bidjobs[i]=t
       }
       res.send(bidjobs)
     })
