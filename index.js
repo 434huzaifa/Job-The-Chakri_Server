@@ -78,6 +78,7 @@ async function run() {
       let bidjobs= new Array(response.length)
       for(let i=0;i<response.length;i++){
         let t=await cjobs.findOne({_id:new ObjectId(response[i].jobid)})
+        t.bidid=response[i]._id
         t.status=response[i].status
         bidjobs[i]=t
       }
@@ -90,13 +91,30 @@ async function run() {
       let bidjobs= new Array(response.length)
       for(let i=0;i<response.length;i++){
         let t=await cjobs.findOne({_id:new ObjectId(response[i].jobid)})
-        t.jobid=response[i].jobid
+        t.bidid=response[i]._id
         t.status=response[i].status
         t.price=response[i].price
-        console.log(t)
+        t.bidder=response[i].bidder
         bidjobs[i]=t
       }
       res.send(bidjobs)
+    })
+    app.put('/jobstatus/:bidid',async(req,res)=>{
+      const bidid=req.params.bidid
+      let {status}=req.body
+      
+      if (status==0) {
+        status="rejected"
+      }
+      else if (status==1) {
+        status="progress"
+      }else if (status==2) {
+        status="completed"
+      }
+      console.log(bidid,status)
+      const result=await cbid.updateOne({_id:new ObjectId(bidid)},{$set:{status}})
+      console.log(result)
+      res.send(result)
     })
     
   } finally {
