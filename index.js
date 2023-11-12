@@ -90,11 +90,13 @@ async function run() {
       let bidjobs= new Array(response.length)
       for(let i=0;i<response.length;i++){
         let t=await cjobs.findOne({_id:new ObjectId(response[i].jobid)})
+
         t.status=response[i].status
         t.price=response[i].price
+        console.log(t)
         bidjobs[i]=t
       }
-      res.send(response)
+      res.send(bidjobs)
     })
     
   } finally {
