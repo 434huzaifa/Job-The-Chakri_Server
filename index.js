@@ -59,8 +59,7 @@ async function run() {
     })
     app.get('/myjobs/:mail',async(req,res)=>{
       let mail=req.params.mail
-      console.log(mail)
-      const query ={employer:{$eq:mail}}
+      const query ={seller:mail}
       const response= await cjobs.find(query).toArray()
       res.send(response)
     })
@@ -69,8 +68,10 @@ async function run() {
       res.send(await cjobs.findOne({_id:id}))
     })
     app.post('/bid',async(req,res)=>{
-      res.send(await cbid.insertOne(req.body))
+      let result=await cbid.insertOne(req.body)
+      res.send(result)
     })
+    
   } finally {
   }
 }
