@@ -83,6 +83,18 @@ async function run() {
       }
       res.send(bidjobs)
     })
+    app.get('/bidrequest/:mail',async(req,res)=>{
+      let mail=req.params.mail
+      const query ={seller:mail}
+      const response= await cbid.find(query).toArray()
+      let bidjobs= new Array(response.length)
+      for(let i=0;i<response.length;i++){
+        let t=await cjobs.findOne({_id:new ObjectId(response[i].jobid)})
+        t.status=response[i].status
+        bidjobs[i]=t
+      }
+      res.send(response)
+    })
     
   } finally {
   }
