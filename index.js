@@ -92,8 +92,10 @@ async function run() {
       for(let i=0;i<response.length;i++){
         let t=await cjobs.findOne({_id:new ObjectId(response[i].jobid)})
         t.bidid=response[i]._id
+        t.bidid=response[i]._id
         t.status=response[i].status
         t.price=response[i].price
+        t.bidder=response[i].bidder
         t.bidder=response[i].bidder
         bidjobs[i]=t
       }
