@@ -137,12 +137,33 @@ async function run() {
     })
     app.post('/search',async (req,res)=>{
       let body=req.body
-      let query=null
-      if (body.type=="Category") {
-        query={ cate: new RegExp(body.search, "i") }
+      const query = {
+        title: new RegExp(body.search, "i"),
+        cate: { $in: body.category }
+      };
+      if (body.max!='' && body.min!='') {
+        query.$expr= {
+          $and: [
+            { $lte: [{ $toInt: '$max' }, parseInt(body.max)] }, // Converting to int the max field
+            { $gte: [{ $toInt: '$min' },  parseInt(body.min)] }
+          ]
+        }
+      }else if(body.max=='' && body.min!=''){
+        query.$expr= {
+          $and: [
+            { $gte: [{ $toInt: '$min' },  parseInt(body.min)] }
+          ]
+        }
+      }else if(body.min=='' && body.max!=''){
+        query.$expr= {
+          $and: [
+            { $lte: [{ $toInt: '$max' }, parseInt(body.max)] }, // Converting to int the max field
+          ]
+        }
       }
       let result=await cjobs.find(query).toArray()
       res.send(result)
+      
     })
   } finally {
   }
