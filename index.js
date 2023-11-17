@@ -131,8 +131,19 @@ async function run() {
       let result=await cjobs.updateOne(query,{$set:req.body})
       res.send(result)
     })
-    
-    
+    app.get('/alljobs',async (req,res)=>{
+      res.send( alljobs= await cjobs.find().toArray())
+
+    })
+    app.post('/search',async (req,res)=>{
+      let body=req.body
+      let query=null
+      if (body.type=="Category") {
+        query={ cate: new RegExp(body.search, "i") }
+      }
+      let result=await cjobs.find(query).toArray()
+      res.send(result)
+    })
   } finally {
   }
 }
