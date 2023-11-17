@@ -75,12 +75,14 @@ async function run() {
       let mail=req.params.mail
       const query ={bidder:mail}
       const response= await cbid.find(query).toArray()
-      let bidjobs= new Array(response.length)
+      let bidjobs= new Array()
       for(let i=0;i<response.length;i++){
         let t=await cjobs.findOne({_id:new ObjectId(response[i].jobid)})
-        t.bidid=response[i]._id
-        t.status=response[i].status
-        bidjobs[i]=t
+        if (t !=null) {
+          t.bidid=response[i]._id
+          t.status=response[i].status
+          bidjobs.push(t)
+        }
       }
       res.send(bidjobs)
     })
@@ -88,23 +90,25 @@ async function run() {
       let mail=req.params.mail
       const query ={seller:mail}
       const response= await cbid.find(query).toArray()
-      let bidjobs= new Array(response.length)
+      let bidjobs= new Array()
       for(let i=0;i<response.length;i++){
         let t=await cjobs.findOne({_id:new ObjectId(response[i].jobid)})
-        t.bidid=response[i]._id
-        t.bidid=response[i]._id
-        t.status=response[i].status
-        t.price=response[i].price
-        t.bidder=response[i].bidder
-        t.bidder=response[i].bidder
-        bidjobs[i]=t
+        if (t!=null) {
+          t.bidid=response[i]._id
+          t.bidid=response[i]._id
+          t.status=response[i].status
+          t.price=response[i].price
+          t.bidder=response[i].bidder
+          t.bidder=response[i].bidder
+          bidjobs.push(t)
+        }
+
       }
       res.send(bidjobs)
     })
     app.put('/jobstatus/:bidid',async(req,res)=>{
       const bidid=req.params.bidid
       let {status}=req.body
-      
       if (status==0) {
         status="rejected"
       }
@@ -113,11 +117,21 @@ async function run() {
       }else if (status==2) {
         status="completed"
       }
-      console.log(bidid,status)
       const result=await cbid.updateOne({_id:new ObjectId(bidid)},{$set:{status}})
-      console.log(result)
       res.send(result)
     })
+    app.get('/jobdelete/:jobid', async(req,res)=>{
+      let id=new ObjectId(req.params.jobid)
+      let result=await cjobs.deleteOne({_id:id})
+      res.send(result)
+    })
+
+    app.put('/updatedjobs/:jobid',async (req, res) => {
+      let query={_id:new ObjectId(req.params.jobid)}
+      let result=await cjobs.updateOne(query,{$set:req.body})
+      res.send(result)
+    })
+    
     
   } finally {
   }
