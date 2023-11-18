@@ -94,11 +94,14 @@ async function run() {
       res.send(response)
     })
     app.get('/job/:id',logger,isThisToken,async(req,res)=>{
-     
-
-
       let id=new ObjectId(req.params.id)
-      res.send(await cjobs.findOne({_id:id}))
+      let result=await cjobs.findOne({_id:id})
+      if (result.seller==req.user.email) {
+        result.owner=true
+      }else{
+        result.owner=false
+      }
+      res.send(result)
     })
     app.post('/bid',logger,isThisToken,async(req,res)=>{
       let result=await cbid.insertOne(req.body)
@@ -161,8 +164,13 @@ async function run() {
 
     app.put('/updatedjobs/:jobid',logger,isThisToken,async (req, res) => {
       let query={_id:new ObjectId(req.params.jobid)}
-      let result=await cjobs.updateOne(query,{$set:req.body})
-      res.send(result)
+      let job=await cjobs.findOne(query)
+      if (job.seller==req.user.email) {
+        let result=await cjobs.updateOne(query,{$set:req.body})
+        res.send(result)
+      }else{
+        res.status(401).send({msg:"Unauthorized"})
+      }
     })
     app.get('/alljobs',logger,isThisToken,async (req,res)=>{
       res.send( alljobs= await cjobs.find().toArray())
