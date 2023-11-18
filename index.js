@@ -224,7 +224,7 @@ async function run() {
       }).send({success:true})
     })
     app.post('/logout',logger,isThisToken,async(req,res)=>{
-      res.clearCookie('huzaifa',{maxAge:0}).send({success:true})
+      res.clearCookie('huzaifa',{maxAge:0,sameSite:"none",secure:true,httpOnly:true}).send({success:true})
     })
     
 
