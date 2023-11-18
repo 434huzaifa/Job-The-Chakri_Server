@@ -9,7 +9,11 @@ const port = process.env.PORT || 54321
 
 app.use(cookie_pares())
 app.use(cors({
-  origin:['http://localhost:5173'],
+  origin:[
+    'https://job-the-chakri.web.app',
+  'https://job-the-chakri.firebaseapp.com',
+  // 'http://localhost:5173'
+],
   credentials:true
 }));
 app.use(express.json());
@@ -52,7 +56,7 @@ async function run() {
     const cbid = database.collection("bid");
     const cjobs = database.collection("jobs");
     const cuser = database.collection("user");
-    app.post('/user',logger,isThisToken, async (req, res) => {
+    app.post('/user',logger, async (req, res) => {
       const user = req.body
       const query = { email: new RegExp(user.email, "i") }
       const userArray=await cuser.findOne(query)
@@ -63,17 +67,17 @@ async function run() {
       }
       res.send({msg:"user exist"})
     })
-    app.get('/top',logger,isThisToken,isThisToken,async(req,res)=>{
+    app.get('/top',logger,async(req,res)=>{
       const users=await cuser.find().limit(5).toArray()
       res.send(users)
     })
-    app.get('/newjobs',logger,isThisToken,async(req,res)=>{
+    app.get('/newjobs',logger,async(req,res)=>{
       const query = cjobs.find({}).sort({ _id: -1 }).limit(4);
       const latestjobs = await query.toArray();
       res.send(latestjobs)
 
     })
-    app.get('/jobs',logger,isThisToken,async(req,res)=>{
+    app.get('/jobs',logger,async(req,res)=>{
       const response={}
       const query1={cate:{$eq:"web development"}}
       response.web=await cjobs.find(query1).toArray()
@@ -139,7 +143,6 @@ async function run() {
             t.bidder=response[i].bidder
             bidjobs.push(t)
           }
-  
         }
         res.send(bidjobs)
       }else{
@@ -177,7 +180,7 @@ async function run() {
         res.status(401).send({msg:"Unauthorized"})
       }
     })
-    app.get('/alljobs',logger,isThisToken,async (req,res)=>{
+    app.get('/alljobs',logger,async (req,res)=>{
       res.send( alljobs= await cjobs.find().toArray())
 
     })
