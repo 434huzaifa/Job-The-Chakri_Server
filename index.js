@@ -124,23 +124,28 @@ async function run() {
     })
     app.get('/bidrequest/:mail',logger,isThisToken,async(req,res)=>{
       let mail=req.params.mail
-      const query ={seller:mail}
-      const response= await cbid.find(query).toArray()
-      let bidjobs= new Array()
-      for(let i=0;i<response.length;i++){
-        let t=await cjobs.findOne({_id:new ObjectId(response[i].jobid)})
-        if (t!=null) {
-          t.bidid=response[i]._id
-          t.bidid=response[i]._id
-          t.status=response[i].status
-          t.price=response[i].price
-          t.bidder=response[i].bidder
-          t.bidder=response[i].bidder
-          bidjobs.push(t)
+      if (mail==req.user.email) {
+        const query ={seller:mail}
+        const response= await cbid.find(query).toArray()
+        let bidjobs= new Array()
+        for(let i=0;i<response.length;i++){
+          let t=await cjobs.findOne({_id:new ObjectId(response[i].jobid)})
+          if (t!=null) {
+            t.bidid=response[i]._id
+            t.bidid=response[i]._id
+            t.status=response[i].status
+            t.price=response[i].price
+            t.bidder=response[i].bidder
+            t.bidder=response[i].bidder
+            bidjobs.push(t)
+          }
+  
         }
-
+        res.send(bidjobs)
+      }else{
+        res.status(401).send({msg:"Unauthorized"})
       }
-      res.send(bidjobs)
+
     })
     app.put('/jobstatus/:bidid',logger,isThisToken,async(req,res)=>{
       const bidid=req.params.bidid
@@ -206,7 +211,7 @@ async function run() {
       res.send(result)
       
     })
-    app.post('/jsonwebtoken',logger,isThisToken,async(req,res)=>{
+    app.post('/jsonwebtoken',logger,async(req,res)=>{
       const user=req.body
       const token=jwt.sign(user,process.env.TOKEN,{ expiresIn: '1h' })
       res.cookie('huzaifa',token,{
